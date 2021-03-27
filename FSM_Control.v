@@ -246,7 +246,16 @@ begin
 					ALUsrcA   = 2'b10;
 					ALUsrcB   = 2'b00;
 					ResultSrc = 2'bXX;
-					ALUCtrl   = 3'b010;//ADD
+					case(Funct7)
+						7'b0000000: // ADD
+							ALUCtrl = 3'b010;
+					   7'b0000001: // MUL
+						   ALUCtrl = 3'b111;
+						7'b0100000: // sub
+						   ALUCtrl = 3'b011;
+					   default:
+							ALUCtrl = 3'b010;
+						endcase
 			  end
 			  S7_ALU_WB:
 			  begin
@@ -279,6 +288,8 @@ begin
 							ALUCtrl   = 3'b010;
 						3'b001:
 							ALUCtrl   = 3'b100;
+					   3'b010:
+							ALUCtrl   = 3'b110;
 						default:
 							ALUCtrl   = 3'b010;
 					endcase

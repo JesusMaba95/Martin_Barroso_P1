@@ -74,6 +74,10 @@ Register_ra
 
 	
 Register
+#(
+	.N(32),
+	.reset_value(124)
+)
 Register_sp
 (
 	.clk(clk),

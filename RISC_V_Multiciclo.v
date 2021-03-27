@@ -34,7 +34,7 @@ wire Ctrl2ID_Mem_Write_w;
 wire clk_1hz;
 
 //assign clk_out = clk_1hz;
-
+/*
 Clock_Divider clk_divider
 (
 	// Input Ports
@@ -44,10 +44,10 @@ Clock_Divider clk_divider
 	// Output Ports
 	.clk_out(clk_1hz)
 );
-
+*/
 CORE CORE_i
 (
-	.clk(clk_1hz),
+	.clk(clk),
 	.reset(reset),
 	.ReadData_i(ReadData_w),
 	.Address_o(Addres_w),
@@ -74,7 +74,7 @@ MemControl X
 
 Register GPIO
 (
-  .clk(clk_1hz),
+  .clk(clk/*_1hz*/),
   .reset(reset),
   .enable(GPIO_enable),
   .DataInput(GPIO_WriteData_w),
@@ -87,7 +87,7 @@ Instruction_Data_Memory ID_MEM
 	.Address(Ctrl2ID_Addres_w),
 	.WriteData(Ctrl2ID_WriteData_w),
 	.MemWrite(Ctrl2ID_Mem_Write_w),
-	.clk(clk_1hz),
+	.clk(clk/*_1hz*/),
 	.ReadData(Ctrl2ID_ReadData_w)
 );
 endmodule

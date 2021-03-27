@@ -19,7 +19,7 @@ reg rst = 1;
 reg [31:0] gpio_in  = 32'h0000_0001;
 wire [7:0]gpio_out;
   
-RISCV
+RISC_V_Multiciclo
 DUT
 (
 	.clk(clk),
