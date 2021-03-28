@@ -16,7 +16,7 @@ module RISC_V_Multiciclo
 (
 	input clk,
 	input reset,
-	//input rx,
+	input rx,
 	//input [31:0]rx_ready,
 	//input [31:0]rx_data,
 	//output [31:0]clean_rx,
@@ -38,7 +38,10 @@ wire Ctrl2ID_Mem_Write_w;
 wire Ctrl2Tx_enable_w;
 wire Ctrl2Tx_data_enable_w;
 wire Ctrl2Clean_rx_enable_w;
+wire rx_data_ready_w;
+wire[(DATA_WIDTH-1):0]clean_rx_w;
 wire clk_1hz;
+wire [7:0]rx_data_w;
 wire [(DATA_WIDTH-1):0]tx_start_w;
 wire [(DATA_WIDTH-1):0]tx_data_w;
 	
@@ -104,7 +107,7 @@ Register rx_ready_i
   .clk(clk_1hz),
   .reset(reset),
   .enable(1'b1),
-  .DataInput(rx_ready),
+  .DataInput({31'b0000_0000_0000_0000_0000_0000_0000_000,rx_data_ready_w}), 
   .DataOutput(Ctrl2Rx_ready_ReadData_w)
   
 );
@@ -113,7 +116,7 @@ Register rx_data_i
   .clk(clk_1hz),
   .reset(reset),
   .enable(1'b1),
-  .DataInput(rx_data),
+  .DataInput({24'b0000_0000_0000_0000_0000_0000,rx_data_w}),
   .DataOutput(Ctrl2Rx_ReadData_w)
   
 );
@@ -123,7 +126,7 @@ Register clean_rx_i
   .reset(reset),
   .enable(Ctrl2Clean_rx_enable_w),
   .DataInput(CtrlWriteData_w),
-  .DataOutput(clean_rx)
+  .DataOutput(clean_rx_w)
   
 );
 Instruction_Data_Memory ID_MEM
@@ -138,13 +141,13 @@ UART Uart_i
 (	// Input Ports
 	.clk(clk),
 	.reset(reset),
-	//.rx_pin,
+	.rx_pin(rx),
 	.tx_start(tx_start_w[0]),
 	.tx_data(tx_data_w[7:0]),
-	//input clear_rx,
-	//.rx_data,
-	// Output Ports
-	//output tx_done,
+	.clear_rx(clean_rx_w[0]),
+	.rx_data(rx_data_w),
+   .rx_data_ready(rx_data_ready_w),
 	.tx_pin(tx)
+
 );
 endmodule
