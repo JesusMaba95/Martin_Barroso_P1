@@ -63,6 +63,8 @@ always@(*) begin
      ReadData_r = Rx_ready_ReadData;
   else if (rx_data)
 	  ReadData_r = Rx_ReadData;
+  else
+     ReadData_r = ID_ReadData;
 end
 //ID_MEM
 assign  ID_Address     = (IdMem) ? Address : 32'h0000_0000;

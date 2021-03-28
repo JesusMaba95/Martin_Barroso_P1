@@ -17,12 +17,11 @@ module RISC_V_Multiciclo
 	input clk,
 	input reset,
 	//input rx,
-	input [31:0]rx_ready,
-	input [31:0]rx_data,
-	output [31:0]tx_data,
-	output [31:0]clean_rx,
-	//output clk_out,
-	output [31:0]tx
+	//input [31:0]rx_ready,
+	//input [31:0]rx_data,
+	//output [31:0]clean_rx,
+	output clk_out,
+	output tx
 );
 
 wire[(DATA_WIDTH-1):0]ReadData_w;
@@ -40,10 +39,12 @@ wire Ctrl2Tx_enable_w;
 wire Ctrl2Tx_data_enable_w;
 wire Ctrl2Clean_rx_enable_w;
 wire clk_1hz;
+wire [(DATA_WIDTH-1):0]tx_start_w;
+wire [(DATA_WIDTH-1):0]tx_data_w;
 	
 	
-//assign clk_out = clk_1hz;
-/*
+assign clk_out = clk_1hz;
+
 Clock_Divider clk_divider
 (
 	// Input Ports
@@ -53,10 +54,10 @@ Clock_Divider clk_divider
 	// Output Ports
 	.clk_out(clk_1hz)
 );
-*/
+
 CORE CORE_i
 (
-	.clk(clk),
+	.clk(clk_1hz),
 	.reset(reset),
 	.ReadData_i(ReadData_w),
 	.Address_o(Addres_w),
@@ -82,25 +83,25 @@ MemControl X
 
 Register tx_i
 (
-  .clk(clk/*_1hz*/),
+  .clk(clk_1hz),
   .reset(reset),
   .enable(Ctrl2Tx_enable_w),
   .DataInput(CtrlWriteData_w),
-  .DataOutput(tx)
+  .DataOutput(tx_start_w)
   
 );
 Register tx_data_i
 (
-  .clk(clk/*_1hz*/),
+  .clk(clk_1hz),
   .reset(reset),
   .enable(Ctrl2Tx_data_enable_w),
   .DataInput(CtrlWriteData_w),
-  .DataOutput(tx_data)
+  .DataOutput(tx_data_w)
   
 );
 Register rx_ready_i
 (
-  .clk(clk/*_1hz*/),
+  .clk(clk_1hz),
   .reset(reset),
   .enable(1'b1),
   .DataInput(rx_ready),
@@ -109,7 +110,7 @@ Register rx_ready_i
 );
 Register rx_data_i
 (
-  .clk(clk/*_1hz*/),
+  .clk(clk_1hz),
   .reset(reset),
   .enable(1'b1),
   .DataInput(rx_data),
@@ -118,7 +119,7 @@ Register rx_data_i
 );
 Register clean_rx_i
 (
-  .clk(clk/*_1hz*/),
+  .clk(clk_1hz),
   .reset(reset),
   .enable(Ctrl2Clean_rx_enable_w),
   .DataInput(CtrlWriteData_w),
@@ -130,7 +131,20 @@ Instruction_Data_Memory ID_MEM
 	.Address(Ctrl2ID_Addres_w),
 	.WriteData(CtrlWriteData_w),
 	.MemWrite(Ctrl2ID_Mem_Write_w),
-	.clk(clk/*_1hz*/),
+	.clk(clk_1hz),
 	.ReadData(Ctrl2ID_ReadData_w)
+);
+UART Uart_i
+(	// Input Ports
+	.clk(clk),
+	.reset(reset),
+	//.rx_pin,
+	.tx_start(tx_start_w[0]),
+	.tx_data(tx_data_w[7:0]),
+	//input clear_rx,
+	//.rx_data,
+	// Output Ports
+	//output tx_done,
+	.tx_pin(tx)
 );
 endmodule

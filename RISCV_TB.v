@@ -16,16 +16,16 @@
 module RISCV_TB;
 reg clk = 0;
 reg rst = 1;
-wire[31:0] tx_data_w,tx_w,clean_rx_w;
+wire[31:0] /*tx_data_w,*/tx_w/*,clean_rx_w*/;
 RISC_V_Multiciclo
 DUT
 (
 	.clk(clk),
 	.reset(rst),
-	.rx_ready(32'd1),
-	.rx_data(32'd15),
-	.tx_data(tx_data_w),
-	.clean_rx(clean_rx_w),
+	//.rx_ready(32'd1),
+	//.rx_data(32'd15),
+	//.tx_data(tx_data_w),
+	//.clean_rx(clean_rx_w),
 	.tx(tx_w)
 
 );
