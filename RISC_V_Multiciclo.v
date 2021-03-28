@@ -16,23 +16,32 @@ module RISC_V_Multiciclo
 (
 	input clk,
 	input reset,
-	input  [7:0]gpio_port_in,
+	//input rx,
+	input [31:0]rx_ready,
+	input [31:0]rx_data,
+	output [31:0]tx_data,
+	output [31:0]clean_rx,
 	//output clk_out,
-	output [7:0]gpio_port_out
+	output [31:0]tx
 );
+
 wire[(DATA_WIDTH-1):0]ReadData_w;
 wire[(DATA_WIDTH-1):0]Addres_w;
 wire[(DATA_WIDTH-1):0]WriteData_w;
 wire Mem_Write_w;
 
 wire[(DATA_WIDTH-1):0]Ctrl2ID_ReadData_w;
+wire[(DATA_WIDTH-1):0]Ctrl2Rx_ReadData_w;
+wire[(DATA_WIDTH-1):0]Ctrl2Rx_ready_ReadData_w;
 wire[(DATA_WIDTH-1):0]Ctrl2ID_Addres_w;
-wire[(DATA_WIDTH-1):0]Ctrl2ID_WriteData_w;
-wire[(DATA_WIDTH-1):0]GPIO_WriteData_w;
-wire GPIO_enable;
+wire[(DATA_WIDTH-1):0]CtrlWriteData_w;
 wire Ctrl2ID_Mem_Write_w;
+wire Ctrl2Tx_enable_w;
+wire Ctrl2Tx_data_enable_w;
+wire Ctrl2Clean_rx_enable_w;
 wire clk_1hz;
-
+	
+	
 //assign clk_out = clk_1hz;
 /*
 Clock_Divider clk_divider
@@ -56,36 +65,70 @@ CORE CORE_i
 );
 MemControl X
 (
-   //CORE
-	.Address(Addres_w),
-	.WriteData(WriteData_w),
+	. Address(Addres_w),
+	.WriteData_in(WriteData_w),
 	.MemWrite(Mem_Write_w),
 	.ReadData(ReadData_w),
-	//ID MEM Interface
 	.ID_Address(Ctrl2ID_Addres_w),
-	.ID_WriteData(Ctrl2ID_WriteData_w),
+	.WriteData_out(CtrlWriteData_w),
 	.ID_MemWrite(Ctrl2ID_Mem_Write_w),
+	.Tx_MemWrite(Ctrl2Tx_enable_w),
+	.Tx_data_Memwrite(Ctrl2Tx_data_enable_w),
+	.Clean_rx_Memwrite(Ctrl2Clean_rx_enable_w),
 	.ID_ReadData(Ctrl2ID_ReadData_w),
-	//GPIOS
-	.GPIO_WriteData(GPIO_WriteData_w),
-	.GPIO_MemWrite(GPIO_enable),
-	.GPIO_ReadData({24'b0000_0000_0000_0000_0000_0000,gpio_port_in})
+	.Rx_ReadData(Ctrl2Rx_ReadData_w),
+	.Rx_ready_ReadData(Ctrl2Rx_ready_ReadData_w)
 );
 
-Register GPIO
+Register tx_i
 (
   .clk(clk/*_1hz*/),
   .reset(reset),
-  .enable(GPIO_enable),
-  .DataInput(GPIO_WriteData_w),
-  .DataOutput(gpio_port_out)
+  .enable(Ctrl2Tx_enable_w),
+  .DataInput(CtrlWriteData_w),
+  .DataOutput(tx)
   
 );
-
+Register tx_data_i
+(
+  .clk(clk/*_1hz*/),
+  .reset(reset),
+  .enable(Ctrl2Tx_data_enable_w),
+  .DataInput(CtrlWriteData_w),
+  .DataOutput(tx_data)
+  
+);
+Register rx_ready_i
+(
+  .clk(clk/*_1hz*/),
+  .reset(reset),
+  .enable(1'b1),
+  .DataInput(rx_ready),
+  .DataOutput(Ctrl2Rx_ready_ReadData_w)
+  
+);
+Register rx_data_i
+(
+  .clk(clk/*_1hz*/),
+  .reset(reset),
+  .enable(1'b1),
+  .DataInput(rx_data),
+  .DataOutput(Ctrl2Rx_ReadData_w)
+  
+);
+Register clean_rx_i
+(
+  .clk(clk/*_1hz*/),
+  .reset(reset),
+  .enable(Ctrl2Clean_rx_enable_w),
+  .DataInput(CtrlWriteData_w),
+  .DataOutput(clean_rx)
+  
+);
 Instruction_Data_Memory ID_MEM
 (
 	.Address(Ctrl2ID_Addres_w),
-	.WriteData(Ctrl2ID_WriteData_w),
+	.WriteData(CtrlWriteData_w),
 	.MemWrite(Ctrl2ID_Mem_Write_w),
 	.clk(clk/*_1hz*/),
 	.ReadData(Ctrl2ID_ReadData_w)

@@ -16,17 +16,17 @@
 module RISCV_TB;
 reg clk = 0;
 reg rst = 1;
-reg [31:0] gpio_in  = 32'h0000_0001;
-wire [7:0]gpio_out;
-  
+wire[31:0] tx_data_w,tx_w,clean_rx_w;
 RISC_V_Multiciclo
 DUT
 (
 	.clk(clk),
 	.reset(rst),
-	.gpio_port_in(gpio_in),
-	.gpio_port_out(gpio_out)
-
+	.rx_ready(32'd1),
+	.rx_data(32'd15),
+	.tx_data(tx_data_w),
+	.clean_rx(clean_rx_w),
+	.tx(tx_w)
 
 );
 /*********************************************************/
