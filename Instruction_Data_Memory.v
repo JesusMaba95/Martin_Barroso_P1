@@ -18,7 +18,7 @@ wire [(DATA_WIDTH-1):0] wRead_Instruction_Mux;
 
 ProgramMemory
 #(
-	.MEMORY_DEPTH(INSTRUCTION_MEMORY_DEPTH),
+	.MEMORY_DEPTH(37),
 	.DATA_WIDTH(DATA_WIDTH)
 )
 Instruction_Memory

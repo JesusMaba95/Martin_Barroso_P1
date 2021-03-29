@@ -30,7 +30,7 @@ localparam OR   = 3'b001;
 localparam ADD  = 3'b010;
 localparam SUB  = 3'b011;
 localparam SLLI = 3'b100;
-localparam NOR  = 3'b101;
+localparam SRLI  = 3'b101;
 localparam SLT  = 3'b110;
 localparam MUL  = 3'b111;
    
@@ -45,8 +45,8 @@ localparam MUL  = 3'b111;
 			ALUResult = A + B;
  		  SUB: // sub
 			ALUResult = A - B;
-		  NOR: // nor
-			ALUResult = ~(A | B);
+		  SRLI: // slri
+			ALUResult = A >> B;
 		  SLLI:
 			ALUResult = A << B;
 		  SLT:

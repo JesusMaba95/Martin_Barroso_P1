@@ -290,6 +290,8 @@ begin
 							ALUCtrl   = 3'b100;
 					   3'b010:
 							ALUCtrl   = 3'b110;
+					   3'b101:
+							ALUCtrl   = 3'b101;
 						default:
 							ALUCtrl   = 3'b010;
 					endcase

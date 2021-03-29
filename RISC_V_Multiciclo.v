@@ -20,7 +20,7 @@ module RISC_V_Multiciclo
 	//input [31:0]rx_ready,
 	//input [31:0]rx_data,
 	//output [31:0]clean_rx,
-	output clk_out,
+	//output clk_out,
 	output tx
 );
 
@@ -46,7 +46,7 @@ wire [(DATA_WIDTH-1):0]tx_start_w;
 wire [(DATA_WIDTH-1):0]tx_data_w;
 	
 	
-assign clk_out = clk_1hz;
+//assign clk_out = clk_1hz;
 
 Clock_Divider clk_divider
 (
